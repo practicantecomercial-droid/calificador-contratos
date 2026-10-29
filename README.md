@@ -1,6 +1,12 @@
 # Calificador de Contratos
 
-App web para calificar contratos con una lista de chequeo tipo Sí/No, guardar historial y generar reportes imprimibles (PDF).
+App para calificar contratos con la lista de chequeo de gestión de contratos (Interdoors). Tiene dos versiones en este mismo repositorio:
+
+1. **Aplicación web** (raíz, `client/` + `server/`) — Node + Express + React. Funciona en el navegador, guarda historial y genera reportes.
+2. **Evaluador documental** (`evaluador-python/`) — Python + Streamlit + OCR (Tesseract). Lee PDFs escaneados, Word e imágenes, y evalúa los 25 criterios con reglas locales (y IA opcional). Ver su [README](evaluador-python/README.md).
+
+## Requisitos (versión web)
+- Node.js 18+.
 
 ## Requisitos
 - Node.js 24 o superior (usa el módulo nativo `node:sqlite`… no, usa archivo JSON, así que sirve cualquier Node 18+).
