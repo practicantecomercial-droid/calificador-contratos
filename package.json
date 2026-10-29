@@ -1,0 +1,13 @@
+{
+  "name": "calificador-contratos",
+  "private": true,
+  "description": "App web para calificar contratos con una lista de chequeo (Interdoors).",
+  "scripts": {
+    "build": "cd server && npm install && cd ../client && npm install && npm run build",
+    "start": "cd server && node src/index.js",
+    "test": "cd server && npm test"
+  },
+  "engines": {
+    "node": ">=20.16"
+  }
+}

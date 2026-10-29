@@ -1,6 +1,6 @@
 import { readData, writeData } from './store.js'
 
-const criterios = [
+const TEXTO_CRITERIOS = [
   'Documentos del asesor comercial: dos (2) copias físicas del contrato, carta de no siniestro (constructoras), cotización firmada y actualizada con costeo detallado, y anexos (manual del contratista, documentación SST).',
   'Forma de pago: anticipo del 40%, saldo del 60% contra entrega, amortización proporcional del anticipo y crédito de 30 días solo si el cliente cumple los requisitos.',
   'Independencia de suministro e instalación: cada concepto se factura y cobra de manera separada.',
@@ -28,11 +28,12 @@ const criterios = [
   'Anexo de garantía de Interdoors al contrato.'
 ]
 
-const data = readData()
-if (data.criterios.length === 0) {
-  data.criterios = criterios.map((texto, i) => ({ id: i + 1, texto, activo: true, orden: i }))
-  writeData(data)
-  console.log(`Se sembraron ${data.criterios.length} criterios.`)
-} else {
-  console.log(`Ya existen ${data.criterios.length} criterios; no se modificó nada.`)
+export function sembrarCriterios() {
+  const data = readData()
+  if (data.criterios.length === 0) {
+    data.criterios = TEXTO_CRITERIOS.map((texto, i) => ({ id: i + 1, texto, activo: true, orden: i }))
+    writeData(data)
+    return data.criterios.length
+  }
+  return 0
 }

@@ -57,3 +57,10 @@ npm run seed
 - `client/` — frontend React + Vite.
 - `SPEC.md` — especificación.
 - `tasks/` — plan y tareas.
+
+## Despliegue en Render
+El repo incluye `render.yaml` (blueprint). En Render: **New → Blueprint** y elige este repo; se crea un Web Service gratis que compila el frontend y arranca el backend. La URL será del tipo `https://calificador-contratos.onrender.com`.
+
+- Los 25 criterios se siembran automáticamente en el primer arranque.
+- La clave de OpenAI se configura como variable de entorno `OPENAI_API_KEY` (opcional).
+- Nota: el plan gratuito usa disco efímero, así que el historial se reinicia en cada redeploy.

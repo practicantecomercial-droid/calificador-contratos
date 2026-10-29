@@ -4,10 +4,14 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import routes from './routes.js'
+import { sembrarCriterios } from './seed.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3001
+
+const sembrados = sembrarCriterios()
+if (sembrados > 0) console.log(`Se sembraron ${sembrados} criterios.`)
 
 app.use(cors())
 app.use(express.json())
