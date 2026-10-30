@@ -23,7 +23,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <h1 onClick={nav.inicio}>Calificador de Contratos</h1>
+        <h1 onClick={nav.inicio}>Interdoors <span>· Calificador de Contratos</span></h1>
         <nav>
           <button className={view.name === 'criterios' ? 'active' : ''} onClick={nav.criterios}>Criterios</button>
           <button className={view.name === 'evaluar' ? 'active' : ''} onClick={() => nav.evaluar()}>Evaluar</button>
