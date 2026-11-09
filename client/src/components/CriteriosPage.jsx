@@ -52,30 +52,45 @@ export default function CriteriosPage() {
 
   return (
     <div className="page">
-      <h2>Lista de chequeo</h2>
+      <div className="page-head">
+        <div>
+          <h2>Lista de chequeo</h2>
+          <p className="page-sub">Estos son los criterios que se evalúan en cada contrato. Puedes agregarlos, editarlos y reordenarlos.</p>
+        </div>
+        <span className="tag tag-count">{criterios.length} criterios</span>
+      </div>
+
       <form className="form-inline" onSubmit={agregar}>
         <input
           type="text"
           value={nuevo}
           onChange={(e) => setNuevo(e.target.value)}
           placeholder="Nuevo criterio…"
+          aria-label="Nuevo criterio"
         />
-        <button type="submit" className="btn primary">Agregar</button>
+        <button type="submit" className="btn primary" disabled={!nuevo.trim()}>Agregar</button>
       </form>
 
-      {cargando ? <p>Cargando…</p> : (
+      {cargando ? (
+        <ul className="lista-criterios" aria-busy="true" aria-label="Cargando criterios">
+          {[0, 1, 2, 3].map((i) => <li key={i} className="skeleton-row" />)}
+        </ul>
+      ) : (
         <ul className="lista-criterios">
           {criterios.map((c, i) => (
             <li key={c.id}>
               {editando === c.id ? (
                 <>
+                  <span className="orden">{i + 1}.</span>
                   <input
                     type="text"
                     value={editTexto}
                     onChange={(e) => setEditTexto(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && guardarEdicion(c.id)}
+                    aria-label={`Editar criterio ${i + 1}`}
                   />
-                  <button className="btn" onClick={() => guardarEdicion(c.id)}>Guardar</button>
+                  <button type="button" className="btn primary sm" onClick={() => guardarEdicion(c.id)}>Guardar</button>
+                  <button type="button" className="btn ghost sm" onClick={() => setEditando(null)}>Cancelar</button>
                 </>
               ) : (
                 <>
@@ -86,17 +101,23 @@ export default function CriteriosPage() {
               <span className="acciones">
                 {editando !== c.id && (
                   <>
-                    <button className="btn" onClick={() => mover(i, -1)} disabled={i === 0}>↑</button>
-                    <button className="btn" onClick={() => mover(i, 1)} disabled={i === criterios.length - 1}>↓</button>
-                    <button className="btn" onClick={() => { setEditando(c.id); setEditTexto(c.texto) }}>Editar</button>
-                    <button className="btn danger" onClick={() => eliminar(c.id)}>Eliminar</button>
+                    <button type="button" className="btn icon sm" onClick={() => mover(i, -1)} disabled={i === 0} aria-label="Subir criterio">↑</button>
+                    <button type="button" className="btn icon sm" onClick={() => mover(i, 1)} disabled={i === criterios.length - 1} aria-label="Bajar criterio">↓</button>
+                    <button type="button" className="btn sm" onClick={() => { setEditando(c.id); setEditTexto(c.texto) }}>Editar</button>
+                    <button type="button" className="btn danger sm" onClick={() => eliminar(c.id)}>Eliminar</button>
                   </>
                 )}
               </span>
             </li>
           ))}
-          {criterios.length === 0 && <p className="vacio">No hay criterios todavía. Agrega el primero.</p>}
         </ul>
+      )}
+
+      {!cargando && criterios.length === 0 && (
+        <div className="empty-state">
+          <h3>No hay criterios todavía</h3>
+          <p>Agrega el primer criterio con el formulario de arriba.</p>
+        </div>
       )}
     </div>
   )

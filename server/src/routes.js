@@ -8,6 +8,31 @@ import { analizarLocal } from './local.js'
 const router = Router()
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } })
 
+const ESTADOS = ['cumple', 'parcial', 'no_cumple', 'sin_evaluar']
+
+function normalizarEstado(it) {
+  const estado = ESTADOS.includes(it.estado) ? it.estado : (it.cumple ? 'cumple' : 'no_cumple')
+  return {
+    criterio_id: it.criterio_id ?? null,
+    criterio_texto: it.criterio_texto ?? '',
+    cumple: estado === 'cumple',
+    estado,
+    confianza: typeof it.confianza === 'number' ? it.confianza : null,
+    observacion: it.observacion ?? ''
+  }
+}
+
+function conteoEstados(items) {
+  const conteo = { cumple: 0, parcial: 0, no_cumple: 0, sin_evaluar: 0 }
+  for (const it of items) {
+    const est = ESTADOS.includes(it.estado) ? it.estado : (it.cumple ? 'cumple' : 'no_cumple')
+    conteo[est] += 1
+  }
+  const total = items.length
+  const puntaje = total === 0 ? 0 : Math.round(((conteo.cumple + 0.5 * conteo.parcial) / total) * 100)
+  return { ...conteo, total, puntaje }
+}
+
 // ── Documento e IA ─────────────────────────────────────────────────────────
 router.post('/extraer', upload.single('documento'), async (req, res) => {
   try {
@@ -101,9 +126,18 @@ router.get('/evaluaciones', (req, res) => {
   const data = readData()
   const evaluaciones = data.evaluaciones
     .map((e) => {
-      const total = e.items.length
-      const cumplidos = e.items.filter((i) => i.cumple).length
-      return { id: e.id, nombre_contrato: e.nombre_contrato, fecha: e.fecha, total, cumplidos }
+      const c = conteoEstados(e.items)
+      return {
+        id: e.id,
+        nombre_contrato: e.nombre_contrato,
+        fecha: e.fecha,
+        total: c.total,
+        cumplidos: c.cumple,
+        parciales: c.parcial,
+        no_cumple: c.no_cumple,
+        sin_evaluar: c.sin_evaluar,
+        puntaje: c.puntaje
+      }
     })
     .sort((a, b) => b.id - a.id)
   res.json(evaluaciones)
@@ -130,12 +164,7 @@ router.post('/evaluaciones', (req, res) => {
     nombre_contrato: nombre_contrato.trim(),
     fecha: fechaFinal,
     observacion_general,
-    items: items.map((it) => ({
-      criterio_id: it.criterio_id ?? null,
-      criterio_texto: it.criterio_texto ?? '',
-      cumple: it.cumple ? true : false,
-      observacion: it.observacion ?? ''
-    }))
+    items: items.map(normalizarEstado)
   }
   data.evaluaciones.push(evaluacion)
   writeData(data)
@@ -153,12 +182,7 @@ router.put('/evaluaciones/:id', (req, res) => {
   ev.nombre_contrato = nombre_contrato.trim()
   ev.fecha = fecha
   ev.observacion_general = observacion_general
-  ev.items = items.map((it) => ({
-    criterio_id: it.criterio_id ?? null,
-    criterio_texto: it.criterio_texto ?? '',
-    cumple: it.cumple ? true : false,
-    observacion: it.observacion ?? ''
-  }))
+  ev.items = items.map(normalizarEstado)
   writeData(data)
   res.json({ ok: true })
 })
