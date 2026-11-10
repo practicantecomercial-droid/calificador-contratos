@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from .context import construir_contexto
 from .document_reader import leer_documento
+from .expediente import combinar_resultados, evaluar_expediente
 from .gc_mapping import fusionar_metadatos
 from .knowledge_base import cargar_base_conocimiento
 from .recognition import reconocer_documento
@@ -217,3 +218,72 @@ def evaluar_documento(
 def evaluar_archivo(ruta, **kwargs):
     """Lee un PDF/Word/imagen y ejecuta el pipeline completo."""
     return evaluar_documento(leer_documento(ruta), **kwargs)
+
+
+def evaluar_documento_con_expediente(
+    documento,
+    archivos,
+    *,
+    base=None,
+    contexto=None,
+    criterios=None,
+    usar_semantica=True,
+    usar_llm=False,
+    metadatos=True,
+):
+    """Evalúa el contrato y confirma la evidencia externa con el expediente.
+
+    ``archivos`` acepta una carpeta, un archivo o una lista de rutas.
+    """
+    base = _preparar_base(base, metadatos)
+    reporte = evaluar_documento(
+        documento,
+        base=base,
+        contexto=contexto,
+        criterios=criterios,
+        usar_semantica=usar_semantica,
+        usar_llm=usar_llm,
+        metadatos=False,
+    )
+    expediente = evaluar_expediente(
+        archivos, base=base, criterios=criterios
+    )
+    combinados = combinar_resultados(
+        reporte["resultados"], expediente["resultados"]
+    )
+    resultados = [
+        _enriquecer(combinados[criterio["criterio_id"]], criterio)
+        for criterio in base["criterios"]
+        if criterio["criterio_id"] in combinados
+    ]
+
+    reporte["criterios"] = resultados
+    reporte["resultados"] = {
+        resultado["criterio_id"]: resultado for resultado in resultados
+    }
+    reporte["expediente"] = {
+        "archivos": expediente["archivos"],
+        "errores": expediente["errores"],
+        "resumen": expediente["resumen"],
+        "resultados": expediente["resultados"],
+    }
+    reporte["resumen"] = _resumen(base, resultados)
+    reporte["resumen"]["evidencia_externa_pendiente"] = [
+        resultado["criterio_id"]
+        for resultado in resultados
+        if resultado.get("requiere_evidencia_externa")
+        and resultado["estado"] != ESTADO_CUMPLE
+    ]
+    for error in expediente["errores"]:
+        reporte["advertencias"].append(
+            "No se pudo leer el archivo del expediente "
+            f"{error['archivo']}: {error['error']}"
+        )
+    return reporte
+
+
+def evaluar_archivo_con_expediente(ruta, archivos, **kwargs):
+    """Lee el contrato y evalúa también los archivos del expediente."""
+    return evaluar_documento_con_expediente(
+        leer_documento(ruta), archivos, **kwargs
+    )

@@ -5,13 +5,19 @@ import argparse
 import json
 import sys
 
-from engine import evaluar_archivo
+from engine import evaluar_archivo, evaluar_archivo_con_expediente
 
 
 def _lista(valor):
     if not valor:
         return None
     return [item.strip().upper() for item in valor.split(",") if item.strip()]
+
+
+def _rutas(valor):
+    if not valor:
+        return None
+    return [item.strip() for item in valor.split(",") if item.strip()]
 
 
 def _imprimir_resumen(reporte):
@@ -50,6 +56,15 @@ def _imprimir_resumen(reporte):
             + ", ".join(resumen["evidencia_externa_pendiente"])
         )
 
+    expediente = reporte.get("expediente")
+    if expediente:
+        print(
+            f"Expediente: {len(expediente['archivos'])} archivo(s) | "
+            f"{len(expediente['errores'])} error(es)"
+        )
+        for error in expediente["errores"]:
+            print(f"ERROR EXPEDIENTE: {error['archivo']}: {error['error']}")
+
     for advertencia in reporte["advertencias"]:
         print(f"ADVERTENCIA: {advertencia}")
 
@@ -68,6 +83,15 @@ def _imprimir_criterios(reporte):
         )
         if resultado["observacion"]:
             print(f"    {resultado['observacion']}")
+        documental = resultado.get("resultado_documental")
+        if documental:
+            print(f"    documental: {documental['estado']}")
+        externo = resultado.get("resultado_expediente")
+        if externo:
+            print(
+                f"    expediente: {externo['estado']} | "
+                f"{externo['observacion']}"
+            )
         if resultado["informacion_faltante"]:
             print("    Faltante: " + "; ".join(resultado["informacion_faltante"]))
         for contradiccion in resultado["contradicciones"]:
@@ -87,6 +111,10 @@ def main(argv=None):
         help="Lista separada por comas de criterios GC-XX a evaluar.",
     )
     parser.add_argument(
+        "--expediente",
+        help="Carpeta o archivos separados por comas con la evidencia externa.",
+    )
+    parser.add_argument(
         "--sin-semantica",
         action="store_true",
         help="Desactiva la capa semántica y usa solo coincidencias léxicas.",
@@ -99,11 +127,19 @@ def main(argv=None):
     args = parser.parse_args(argv)
 
     try:
-        reporte = evaluar_archivo(
-            args.archivo,
-            criterios=_lista(args.criterios),
-            usar_semantica=not args.sin_semantica,
-        )
+        if args.expediente:
+            reporte = evaluar_archivo_con_expediente(
+                args.archivo,
+                _rutas(args.expediente),
+                criterios=_lista(args.criterios),
+                usar_semantica=not args.sin_semantica,
+            )
+        else:
+            reporte = evaluar_archivo(
+                args.archivo,
+                criterios=_lista(args.criterios),
+                usar_semantica=not args.sin_semantica,
+            )
     except FileNotFoundError:
         print(f"No existe el archivo: {args.archivo}", file=sys.stderr)
         return 2
