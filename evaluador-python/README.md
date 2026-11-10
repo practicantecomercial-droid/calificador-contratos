@@ -29,7 +29,11 @@ Abre http://localhost:8501. Sube el contrato, revisa la extracción, elige el mo
 ### Línea de comandos
 ```bash
 .venv\Scripts\python cli.py "ruta/contrato.pdf"
+.venv\Scripts\python cli.py "ruta/contrato.pdf" --criterios GC-02,GC-09
+.venv\Scripts\python cli.py "ruta/contrato.pdf" --json
 ```
+`--criterios` limita la evaluación a los criterios indicados, `--json` imprime el
+reporte completo y `--sin-semantica` desactiva la capa semántica.
 
 ## Modos de evaluación
 
