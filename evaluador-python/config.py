@@ -8,6 +8,8 @@ DATA_DIR = BASE_DIR / "data"
 TEMP_DIR = DATA_DIR / "temp"
 TESSDATA_DIR = DATA_DIR / "tessdata"
 CHECKLIST_PATH = BASE_DIR / "rules" / "checklist.yaml"
+KNOWLEDGE_DIR = BASE_DIR / "knowledge"
+KNOWLEDGE_PATH = KNOWLEDGE_DIR / "Criterios_Gestion_Contratos_Interdoors.md"
 REPORTS_DIR = BASE_DIR / "reports" / "output"
 
 # OCR
@@ -22,7 +24,7 @@ OCR_MIN_CHARS = 40  # si una página tiene menos texto, se hace OCR
 # IA opcional
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-for d in (DATA_DIR, TEMP_DIR, TESSDATA_DIR, REPORTS_DIR):
+for d in (DATA_DIR, TEMP_DIR, TESSDATA_DIR, KNOWLEDGE_DIR, REPORTS_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 # Tesseract debe encontrar los .traineddata (spa, eng, osd)
