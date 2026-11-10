@@ -14,13 +14,9 @@ from ..schema import (
     ESTADO_PARCIAL,
     ESTADO_REVISION_HUMANA,
 )
-from .generic import (
-    calcular_confianza,
-    candidatos_utiles,
-    combinar_estado,
-    construir_resultado,
-    resultado_subrequisito,
-)
+from .common import candidatos_con as _candidatos_con
+from .common import resultado as _resultado
+from .generic import calcular_confianza, combinar_estado, construir_resultado
 from .operators import contiene_frase, contiene_porcentaje, porcentajes
 
 _ANTICIPO = (
@@ -78,40 +74,11 @@ _AUTORIZACION = (
 )
 
 
-def _candidatos_con(candidatos, terminos):
-    return [
-        candidato
-        for candidato in candidatos_utiles(candidatos)
-        if contiene_frase(candidato.get("texto", ""), terminos)
-    ]
-
-
 def _tiene_excepcion(candidatos) -> bool:
     return any(
         candidato.get("contexto", {}).get("excepcion")
         or candidato.get("contexto", {}).get("condicional")
         for candidato in candidatos
-    )
-
-
-def _resultado(subrequisito, estado, candidatos, observacion, confianza=None):
-    utiles = candidatos or []
-    score = max((candidato.get("score", 0.0) for candidato in utiles), default=0.0)
-    if confianza is None:
-        if estado == ESTADO_CUMPLE:
-            confianza = min(0.95, 0.6 + 0.4 * score)
-        elif estado == ESTADO_NO_CUMPLE:
-            confianza = 0.8
-        elif estado == ESTADO_PARCIAL:
-            confianza = 0.55
-        elif estado == ESTADO_REVISION_HUMANA:
-            confianza = 0.5
-        elif estado == ESTADO_NO_APLICA:
-            confianza = 0.9
-        else:
-            confianza = 0.0
-    return resultado_subrequisito(
-        subrequisito, estado, confianza, score, utiles[:2], observacion
     )
 
 
