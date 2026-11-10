@@ -37,6 +37,13 @@ _CONDICIONAL_RE = re.compile(
 )
 _TABLA_RUIDO_RE = re.compile(r"^[-|=\s]+$")
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
+_NUM_RE = re.compile(r"\d+")
+
+_TOKENS_GENERICOS = {
+    "valor", "total", "contrato", "pago", "suministro", "entrega",
+    "entregas", "factura", "facturas", "condicion", "condiciones",
+    "plazo", "dias", "monto", "global", "parte", "caso",
+}
 
 _STOPWORDS = {
     "para", "como", "cuando", "donde", "sobre", "entre", "desde", "hasta",
@@ -85,9 +92,27 @@ def _tokens(texto: str):
     }
 
 
+def _numeros(texto: str):
+    return set(_NUM_RE.findall(texto))
+
+
 def _conceptos_relacionados(item: str, conceptos):
     tokens_item = _tokens(item)
-    return [c for c in conceptos if tokens_item & _tokens(c)]
+    numeros_item = _numeros(item)
+    relacionados = []
+    for concepto in conceptos:
+        compartidos = tokens_item & _tokens(concepto)
+        if numeros_item & _numeros(concepto):
+            relacionados.append(concepto)
+            continue
+        if len(compartidos) >= 2:
+            relacionados.append(concepto)
+            continue
+        if len(compartidos) == 1:
+            (token,) = compartidos
+            if token not in _TOKENS_GENERICOS:
+                relacionados.append(concepto)
+    return relacionados
 
 
 def _campos(bloque: str):

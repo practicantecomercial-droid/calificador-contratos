@@ -56,6 +56,13 @@ def test_conceptos_relacionados_al_subrequisito():
     assert any("anticipo" in c.lower() for c in anticipo["conceptos"])
 
 
+def test_conceptos_relacionados_evitan_genericos_y_usan_numeros():
+    criterio = kb.criterio_por_id(base(), "GC-02")
+    anticipo = criterio["subrequisitos"][0]
+    assert any("cuarenta por ciento" in c.lower() for c in anticipo["conceptos"])
+    assert not any("saldo" in c.lower() for c in anticipo["conceptos"])
+
+
 def test_seccion_3_marca_evidencia_externa():
     b = base()
     assert set(b["requieren_evidencia_externa"]) == EXTERNOS_ESPERADOS
