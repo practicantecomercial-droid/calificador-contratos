@@ -11,7 +11,12 @@ from .gc03 import validar_gc03
 from .gc04 import validar_gc04
 from .gc05 import validar_gc05
 from .gc06 import validar_gc06
+from .gc07 import validar_gc07
+from .gc08 import validar_gc08
 from .gc09 import validar_gc09
+from .gc10 import validar_gc10
+from .gc11 import validar_gc11
+from .gc12 import validar_gc12
 from .gc14 import validar_gc14
 from .gc16 import validar_gc16
 from .gc24 import validar_gc24
@@ -23,7 +28,12 @@ REGLAS = {
     "GC-04": validar_gc04,
     "GC-05": validar_gc05,
     "GC-06": validar_gc06,
+    "GC-07": validar_gc07,
+    "GC-08": validar_gc08,
     "GC-09": validar_gc09,
+    "GC-10": validar_gc10,
+    "GC-11": validar_gc11,
+    "GC-12": validar_gc12,
     "GC-14": validar_gc14,
     "GC-16": validar_gc16,
     "GC-24": validar_gc24,
