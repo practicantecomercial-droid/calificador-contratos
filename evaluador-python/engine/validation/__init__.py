@@ -6,6 +6,12 @@ cubre los criterios que aún no tienen operadores deterministas.
 from __future__ import annotations
 
 from ..context import construir_contexto
+from ..schema import (
+    ALCANCE_DOCUMENTAL,
+    ESTADO_NO_IDENTIFICADO,
+    ESTADO_PARCIAL,
+)
+from .common import marcar_evidencia_externa
 from .generic import validar_criterio_generico
 from .rules_registry import validador_para
 
@@ -32,18 +38,26 @@ def validar_criterio(
     """Valida un criterio con su regla específica o el validador genérico."""
     validador = validador_para(criterio.get("criterio_id"))
     if validador is None:
-        return validar_criterio_generico(
+        resultado = validar_criterio_generico(
             criterio,
             reconocimiento,
             contexto=contexto,
             texto_documento=texto_documento,
         )
-    return validador(
-        criterio,
-        reconocimiento,
-        contexto=contexto,
-        texto_documento=texto_documento,
-    )
+    else:
+        resultado = validador(
+            criterio,
+            reconocimiento,
+            contexto=contexto,
+            texto_documento=texto_documento,
+        )
+    if (
+        criterio.get("requiere_evidencia_externa")
+        and resultado.get("alcance") == ALCANCE_DOCUMENTAL
+        and resultado.get("estado") in (ESTADO_NO_IDENTIFICADO, ESTADO_PARCIAL)
+    ):
+        marcar_evidencia_externa(resultado, criterio)
+    return resultado
 
 
 def validar_documento(

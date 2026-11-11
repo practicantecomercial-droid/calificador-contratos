@@ -97,8 +97,62 @@ def resultado(
     )
 
 
+def resultado_evidencia(
+    subrequisito,
+    texto,
+    terminos,
+    candidatos,
+    *,
+    cumple,
+    parcial,
+    ausente,
+    terminos_parciales=(),
+    estado_ausente=ESTADO_NO_IDENTIFICADO,
+):
+    """Resuelve un subrequisito por presencia de evidencia y señales parciales."""
+    if contiene_frase(texto, terminos):
+        return resultado(
+            subrequisito,
+            ESTADO_CUMPLE,
+            candidatos_con(candidatos, terminos),
+            cumple,
+        )
+    if terminos_parciales and contiene_frase(texto, terminos_parciales):
+        return resultado(
+            subrequisito,
+            ESTADO_PARCIAL,
+            candidatos_con(candidatos, terminos_parciales),
+            parcial,
+        )
+    return resultado(
+        subrequisito, estado_ausente, [], ausente
+    )
+
+
+def no_aplica(subrequisito, observacion):
+    return resultado(subrequisito, ESTADO_NO_APLICA, [], observacion)
+
+
+def observacion_criterio(estado, resultados, mensajes):
+    base = mensajes.get(estado, "")
+    if estado in (ESTADO_PARCIAL, ESTADO_NO_CUMPLE):
+        pendientes = [
+            item["subrequisito_id"]
+            for item in resultados
+            if item["estado"] in (
+                ESTADO_PARCIAL,
+                ESTADO_NO_IDENTIFICADO,
+                ESTADO_NO_CUMPLE,
+            )
+        ]
+        if pendientes:
+            base = (base + " " if base else "") + (
+                "Pendientes: " + ", ".join(pendientes) + "."
+            )
+    return base
+
+
 def finalizar(criterio, resultados, contexto=None, observacion="", combinar=None):
-    """Combina subrequisitos, calcula confianza y arma el resultado del criterio."""
     estado = combinar(resultados) if combinar else combinar_estado(resultados)
     confianza = calcular_confianza(resultados)
     if estado == ESTADO_CUMPLE:
