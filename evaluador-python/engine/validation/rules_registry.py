@@ -24,7 +24,12 @@ from .gc16 import validar_gc16
 from .gc17 import validar_gc17
 from .gc18 import validar_gc18
 from .gc19 import validar_gc19
+from .gc20 import validar_gc20
+from .gc21 import validar_gc21
+from .gc22 import validar_gc22
+from .gc23 import validar_gc23
 from .gc24 import validar_gc24
+from .gc25 import validar_gc25
 
 REGLAS = {
     "GC-01": validar_gc01,
@@ -46,7 +51,12 @@ REGLAS = {
     "GC-17": validar_gc17,
     "GC-18": validar_gc18,
     "GC-19": validar_gc19,
+    "GC-20": validar_gc20,
+    "GC-21": validar_gc21,
+    "GC-22": validar_gc22,
+    "GC-23": validar_gc23,
     "GC-24": validar_gc24,
+    "GC-25": validar_gc25,
 }
 
 
