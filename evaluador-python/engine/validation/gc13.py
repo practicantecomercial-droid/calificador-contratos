@@ -49,7 +49,18 @@ _OBSERVACIONES = {
 }
 
 
-def _validar_vigencia(subrequisito, candidatos, texto):
+def _misma_vigencia(contexto):
+    inicio = (contexto or {}).get("fecha_inicio")
+    fin = (contexto or {}).get("fecha_fin")
+    if not inicio or not fin:
+        return False
+    try:
+        return int(str(inicio)[:4]) == int(str(fin)[:4])
+    except (TypeError, ValueError):
+        return False
+
+
+def _validar_vigencia(subrequisito, candidatos, texto, contexto=None):
     if contiene_frase(texto, _VIGENCIA_POSTERIOR):
         return resultado(
             subrequisito,
@@ -57,11 +68,19 @@ def _validar_vigencia(subrequisito, candidatos, texto):
             candidatos_con(candidatos, _VIGENCIA_POSTERIOR),
             "Se identifica ejecución en un año calendario posterior.",
         )
-    if contiene_frase(texto, ("vigencia", "ano", "cotizacion")):
+    if _misma_vigencia(contexto):
+        return no_aplica(
+            subrequisito,
+            "La ejecución no se proyecta en una vigencia posterior.",
+        )
+    if contiene_frase(
+        texto,
+        ("vigencia", "ano calendario", "ano siguiente", "cotizacion"),
+    ):
         return resultado(
             subrequisito,
             ESTADO_PARCIAL,
-            candidatos_con(candidatos, ("vigencia", "ano")),
+            candidatos_con(candidatos, ("vigencia", "ano calendario")),
             "Se menciona la vigencia sin precisar si la ejecución es posterior.",
         )
     return no_aplica(
@@ -101,7 +120,7 @@ def validar_gc13(criterio, reconocimiento, contexto=None, texto_documento=""):
 
     validadores = {
         "GC-13.1": lambda sub: _validar_vigencia(
-            sub, candidatos.get("GC-13.1", []), texto
+            sub, candidatos.get("GC-13.1", []), texto, contexto
         ),
         "GC-13.2": lambda sub: _validar_reajuste(
             sub, candidatos.get("GC-13.2", []), texto

@@ -106,6 +106,35 @@ def _validar_cantidades(subrequisito, candidatos, texto):
     )
 
 
+def _validar_vigencia(subrequisito, candidatos, texto):
+    if (
+        contiene_frase(texto, _VIGENCIA_30)
+        and contiene_frase(texto, _COTIZACION)
+        and not contiene_frase(texto, ("tiempo de entrega",))
+    ):
+        return resultado(
+            subrequisito,
+            ESTADO_CUMPLE,
+            candidatos_con(candidatos, _VIGENCIA_30),
+            "La cotización declara vigencia de 30 días calendario.",
+        )
+    if contiene_frase(texto, _COTIZACION) and contiene_frase(
+        texto, _VIGENCIA
+    ):
+        return resultado(
+            subrequisito,
+            ESTADO_PARCIAL,
+            candidatos_con(candidatos, _VIGENCIA),
+            "Se menciona vigencia sin precisar 30 días calendario.",
+        )
+    return resultado(
+        subrequisito,
+        ESTADO_NO_IDENTIFICADO,
+        [],
+        "No se identificó la vigencia de 30 días de la cotización.",
+    )
+
+
 def validar_gc06(criterio, reconocimiento, contexto=None, texto_documento=""):
     """Valida la cotización, su correspondencia y vigencia."""
     texto = texto_documento or (contexto or {}).get("observaciones", "")
@@ -122,15 +151,8 @@ def validar_gc06(criterio, reconocimiento, contexto=None, texto_documento=""):
         "GC-06.2": lambda sub: _validar_cantidades(
             sub, candidatos.get("GC-06.2", []), texto
         ),
-        "GC-06.3": lambda sub: resultado_evidencia(
-            sub,
-            texto,
-            _VIGENCIA_30,
-            candidatos.get("GC-06.3", []),
-            cumple="La cotización declara vigencia de 30 días calendario.",
-            parcial="Se menciona vigencia sin precisar 30 días calendario.",
-            ausente="No se identificó la vigencia de 30 días de la cotización.",
-            terminos_parciales=_COTIZACION + _VIGENCIA,
+        "GC-06.3": lambda sub: _validar_vigencia(
+            sub, candidatos.get("GC-06.3", []), texto
         ),
         "GC-06.4": lambda sub: resultado_evidencia(
             sub,

@@ -48,9 +48,9 @@ def test_gc20_gestion_polizas_completa(base):
     assert subs["GC-20.5"]["estado"] == ESTADO_CUMPLE
 
 
-def test_gc20_solo_polizas_es_parcial(base):
+def test_gc20_solo_polizas_no_identifica(base):
     resultado = _validar(base, "GC-20", "Se mencionan polizas.")
-    assert resultado["estado"] == ESTADO_PARCIAL
+    assert resultado["estado"] == ESTADO_NO_IDENTIFICADO
 
 
 def test_gc20_sin_mencion_no_identifica(base):
@@ -149,9 +149,9 @@ def test_gc25_anexo_completo(base):
     assert subs["GC-25.2"]["estado"] == ESTADO_CUMPLE
 
 
-def test_gc25_solo_garantia_es_parcial(base):
+def test_gc25_solo_garantia_no_identifica(base):
     resultado = _validar(base, "GC-25", "Se menciona garantia.")
-    assert resultado["estado"] == ESTADO_PARCIAL
+    assert resultado["estado"] == ESTADO_NO_IDENTIFICADO
 
 
 def test_gc25_sin_mencion_no_identifica(base):

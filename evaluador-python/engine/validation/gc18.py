@@ -24,7 +24,15 @@ _RELACION = (
     "registrado en la relacion",
     "base de contratos",
 )
-_OTROSI = ("otrosi", "prorroga", "prorroga del contrato")
+_OTROSI = (
+    "otrosi al contrato",
+    "otrosi no",
+    "otrosi numero",
+    "se firma otrosi",
+    "se suscribe otrosi",
+    "prorroga del contrato",
+    "prorroga contractual",
+)
 _ACTUALIZACION_PLAZO = (
     "actualizacion del plazo",
     "prorroga del plazo",
@@ -128,7 +136,7 @@ def validar_gc18(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se registra la fecha de inicio del trámite.",
             parcial="Se menciona una fecha sin precisar el inicio del trámite.",
             ausente="No se identificó la fecha de inicio del trámite.",
-            terminos_parciales=("fecha",),
+            terminos_parciales=(),
         ),
         "GC-18.4": lambda sub: resultado_evidencia(
             sub,

@@ -54,7 +54,7 @@ def validar_gc25(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="El documento de garantía de Interdoors está incorporado o adjunto.",
             parcial="Se menciona garantía sin acreditar el anexo de Interdoors.",
             ausente="No se identificó el anexo de garantía de Interdoors.",
-            terminos_parciales=("garantia",),
+            terminos_parciales=(),
         ),
         "GC-25.2": lambda sub: resultado_evidencia(
             sub,
@@ -64,7 +64,7 @@ def validar_gc25(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se evidencia la incorporación del anexo como parte integral.",
             parcial="Se menciona anexo sin acreditar su incorporación.",
             ausente="No se identificó evidencia de incorporación del anexo.",
-            terminos_parciales=("anexo", "adjunto"),
+            terminos_parciales=(),
         ),
     }
 

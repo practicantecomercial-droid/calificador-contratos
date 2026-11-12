@@ -99,7 +99,7 @@ def validar_gc20(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se evidencia la firma de las pólizas.",
             parcial="Se mencionan pólizas sin acreditar su firma.",
             ausente="No se identificaron pólizas firmadas.",
-            terminos_parciales=("poliza",),
+            terminos_parciales=(),
         ),
         "GC-20.3": lambda sub: resultado_evidencia(
             sub,
@@ -109,7 +109,7 @@ def validar_gc20(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se digitalizan las pólizas firmadas.",
             parcial="Se mencionan pólizas sin acreditar su digitalización.",
             ausente="No se identificó la digitalización de las pólizas.",
-            terminos_parciales=("poliza", "digital", "escane"),
+            terminos_parciales=(),
         ),
         "GC-20.4": lambda sub: resultado_evidencia(
             sub,
@@ -119,7 +119,7 @@ def validar_gc20(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Las pólizas se archivan en Bitácora.",
             parcial="Se menciona Bitácora sin precisar el archivo de pólizas.",
             ausente="No se identificó el archivo de pólizas en Bitácora.",
-            terminos_parciales=("bitacora",),
+            terminos_parciales=(),
         ),
         "GC-20.5": lambda sub: resultado_evidencia(
             sub,
@@ -129,7 +129,7 @@ def validar_gc20(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="La nomenclatura identifica asesor, constructora, obra, contrato y pólizas.",
             parcial="Se menciona nomenclatura sin precisar sus componentes.",
             ausente="No se identificó la nomenclatura de las pólizas.",
-            terminos_parciales=("nomenclatura",),
+            terminos_parciales=(),
         ),
     }
 

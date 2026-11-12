@@ -101,7 +101,14 @@ def validar_gc04(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se identifican entregas parciales o totales según lo acordado.",
             parcial="Se menciona la entrega del suministro sin precisar su modalidad.",
             ausente="No se identificó la modalidad de entrega del suministro.",
-            terminos_parciales=_SUMINISTRO + ("entrega",),
+            terminos_parciales=(
+                "entrega parcial",
+                "entregas parciales",
+                "entrega total",
+                "despachos",
+                "lotes",
+                "cronograma",
+            ),
         ),
     }
 

@@ -19,7 +19,13 @@ _ANEXO = (
     "terminos y condiciones",
 )
 _ALCANCE = ("alcance", "cobertura", "exclusiones", "ampara", "cubre")
-_VIGENCIA = ("vigencia", "duracion", "periodo de garantia")
+_VIGENCIA = (
+    "vigencia",
+    "duracion",
+    "periodo de garantia",
+    "desde",
+    "hasta",
+)
 _RECLAMO = (
     "reclamacion",
     "solicitud de garantia",

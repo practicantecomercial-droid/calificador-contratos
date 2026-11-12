@@ -13,6 +13,7 @@ from .common import (
     candidatos_con,
     finalizar,
     fragmentos_con,
+    fragmentos_con_contexto,
     resultado,
     vigencia_meses,
 )
@@ -40,7 +41,7 @@ _APROBACION = (
 
 
 def _vigencia_para(texto, terminos, meses_minimo):
-    fragmentos = fragmentos_con(texto, terminos)
+    fragmentos = fragmentos_con_contexto(texto, terminos)
     if not fragmentos and contiene_frase(texto, terminos):
         fragmentos = [texto]
     for fragmento in fragmentos:

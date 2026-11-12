@@ -101,7 +101,7 @@ def test_suma_de_polizas_superior_al_100_no_cumple(base):
 
 
 @pytest.mark.skipif(not PDF_2780477.exists(), reason="PDF de prueba no disponible")
-def test_pdf_real_polizas_parciales(base):
+def test_pdf_real_polizas_cumplen(base):
     documento = leer_documento(PDF_2780477)
     reconocimiento = reconocer_documento(base, documento, criterios=["GC-09"])
     resultado = validar_documento(
@@ -109,9 +109,9 @@ def test_pdf_real_polizas_parciales(base):
     )["criterios"]["GC-09"]
     subs = _subrequisitos(resultado)
 
-    assert resultado["estado"] == ESTADO_PARCIAL
+    assert resultado["estado"] == ESTADO_CUMPLE
     assert subs["GC-09.1"]["estado"] == ESTADO_CUMPLE
     assert subs["GC-09.3"]["estado"] == ESTADO_NO_APLICA
-    assert subs["GC-09.4"]["estado"] == ESTADO_PARCIAL
+    assert subs["GC-09.4"]["estado"] == ESTADO_CUMPLE
     assert subs["GC-09.5"]["estado"] == ESTADO_CUMPLE
     assert subs["GC-09.6"]["estado"] == ESTADO_NO_APLICA

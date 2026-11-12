@@ -63,9 +63,16 @@ def _validar_coincidencia(subrequisito, candidatos, texto):
             candidatos_con(candidatos, _COINCIDENCIA),
             "La referencia de la cotización coincide en pólizas o cuentas de cobro.",
         )
+    if contiene_frase(texto, _COTIZACION):
+        return resultado(
+            subrequisito,
+            ESTADO_PARCIAL,
+            candidatos_con(candidatos, _POLIZAS + _COTIZACION),
+            "Se mencionan pólizas o cuentas de cobro sin acreditar la coincidencia.",
+        )
     return resultado(
         subrequisito,
-        ESTADO_PARCIAL,
+        ESTADO_NO_IDENTIFICADO,
         candidatos_con(candidatos, _POLIZAS),
         "Se mencionan pólizas o cuentas de cobro sin acreditar la coincidencia.",
     )
@@ -99,7 +106,7 @@ def validar_gc07(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="El contrato indica la fecha de elaboración de la cotización.",
             parcial="Se menciona la cotización sin su fecha de elaboración.",
             ausente="No se identificó la fecha de la cotización.",
-            terminos_parciales=_COTIZACION + ("fecha",),
+            terminos_parciales=_COTIZACION,
         ),
         "GC-07.3": lambda sub: _validar_coincidencia(
             sub, candidatos.get("GC-07.3", []), texto

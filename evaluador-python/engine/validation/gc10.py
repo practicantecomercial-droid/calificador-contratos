@@ -39,7 +39,7 @@ _MERCADO = (
     "variaciones de mercado",
     "precios de mercado",
     "indice de precios",
-    "ipc",
+    "indice de precios al consumidor",
     "conforme al mercado",
     "condiciones del mercado",
 )

@@ -85,7 +85,7 @@ def _validar_polizas(subrequisito, candidatos, texto):
         )
     return resultado(
         subrequisito,
-        ESTADO_PARCIAL,
+        ESTADO_NO_IDENTIFICADO,
         candidatos_con(candidatos, ("poliza",)),
         "Se mencionan pólizas sin acreditar su firma.",
     )
@@ -125,7 +125,7 @@ def validar_gc21(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se identifica la cuenta de cobro del anticipo.",
             parcial="Se menciona el anticipo sin su cuenta de cobro.",
             ausente="No se identificó la cuenta de cobro del anticipo.",
-            terminos_parciales=("anticipo",),
+            terminos_parciales=(),
         ),
         "GC-21.5": lambda sub: resultado_evidencia(
             sub,
@@ -135,7 +135,7 @@ def validar_gc21(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se identifica la carta de envío de documentos.",
             parcial="Se menciona envío sin carta remisoria.",
             ausente="No se identificó la carta de envío.",
-            terminos_parciales=("carta", "envio"),
+            terminos_parciales=(),
         ),
     }
 

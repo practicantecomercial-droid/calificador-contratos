@@ -40,6 +40,77 @@ def fragmentos_con(texto, terminos):
     ]
 
 
+def fragmentos_con_contexto(texto, terminos, siguientes=1):
+    """Fragmentos que contienen los términos, unidos con los siguientes."""
+    partes = fragmentos(texto)
+    bloques = []
+    for indice, parte in enumerate(partes):
+        if contiene_frase(parte, terminos):
+            bloques.append(" ".join(partes[indice : indice + 1 + siguientes]))
+    return bloques
+
+
+_MESES = {
+    "enero": 1,
+    "febrero": 2,
+    "marzo": 3,
+    "abril": 4,
+    "mayo": 5,
+    "junio": 6,
+    "julio": 7,
+    "agosto": 8,
+    "septiembre": 9,
+    "setiembre": 9,
+    "octubre": 10,
+    "noviembre": 11,
+    "diciembre": 12,
+}
+
+
+def _parse_fecha(texto):
+    norm = normalizar(texto)
+    coincidencia = re.search(
+        r"(\d{1,2})\s+de\s+([a-z]+)\s+de\s+(\d{4})", norm
+    )
+    if coincidencia:
+        mes = _MESES.get(coincidencia.group(2))
+        if mes:
+            return (
+                int(coincidencia.group(3)),
+                mes,
+                int(coincidencia.group(1)),
+            )
+    coincidencia = re.search(
+        r"([a-z]+)\s+(\d{1,2})\s+de\s+(\d{4})", norm
+    )
+    if coincidencia:
+        mes = _MESES.get(coincidencia.group(1))
+        if mes:
+            return (
+                int(coincidencia.group(3)),
+                mes,
+                int(coincidencia.group(2)),
+            )
+    return None
+
+
+def _rangos_fechas(texto):
+    norm = normalizar(texto)
+    patron = re.compile(
+        r"desde\s+(?:el\s+)?"
+        r"(\d{1,2}\s+de\s+[a-z]+\s+de\s+\d{4}|[a-z]+\s+\d{1,2}\s+de\s+\d{4})"
+        r"\s+hasta\s+(?:el\s+)?"
+        r"(\d{1,2}\s+de\s+[a-z]+\s+de\s+\d{4}|[a-z]+\s+\d{1,2}\s+de\s+\d{4})"
+    )
+    rangos = []
+    for coincidencia in patron.finditer(norm):
+        inicio = _parse_fecha(coincidencia.group(1))
+        fin = _parse_fecha(coincidencia.group(2))
+        if inicio and fin:
+            rangos.append((inicio, fin))
+    return rangos
+
+
 def vigencia_meses(texto):
     """Devuelve la vigencia máxima expresada en meses, o ``None``."""
     norm = normalizar(texto)
@@ -52,6 +123,12 @@ def vigencia_meses(texto):
         for valor in re.findall(r"(\d+)\s*(?:mes|meses)", norm)
     ]
     valores = [anio * 12 for anio in anios] + meses
+    for inicio, fin in _rangos_fechas(texto):
+        duracion = (fin[0] - inicio[0]) * 12 + (fin[1] - inicio[1])
+        if fin[2] < inicio[2]:
+            duracion -= 1
+        if duracion > 0:
+            valores.append(duracion)
     return max(valores) if valores else None
 
 

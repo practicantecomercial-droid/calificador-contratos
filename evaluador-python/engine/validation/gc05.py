@@ -106,7 +106,7 @@ def validar_gc05(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se reconoce la disponibilidad de recepción por parte de la obra.",
             parcial="Se menciona la recepción sin precisar la disponibilidad de la obra.",
             ausente="No se identificó la disponibilidad de recepción.",
-            terminos_parciales=("recepcion", "obra"),
+            terminos_parciales=("recepcion",),
         ),
     }
 

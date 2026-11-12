@@ -105,7 +105,11 @@ def validar_gc19(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se solicita la cuenta de cobro del anticipo.",
             parcial="Se menciona el anticipo sin solicitar la cuenta de cobro.",
             ausente="No se identificó la solicitud de cuenta de cobro.",
-            terminos_parciales=("anticipo",),
+            terminos_parciales=(
+                "se solicita anticipo",
+                "solicitud de anticipo",
+                "solicitar anticipo",
+            ),
         ),
         "GC-19.3": lambda sub: resultado_evidencia(
             sub,
@@ -115,7 +119,11 @@ def validar_gc19(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="Se solicitan las pólizas requeridas.",
             parcial="Se mencionan pólizas sin acreditar su solicitud.",
             ausente="No se identificó la solicitud de pólizas.",
-            terminos_parciales=("poliza",),
+            terminos_parciales=(
+                "solicitud de polizas",
+                "solicitar polizas",
+                "se solicitan polizas",
+            ),
         ),
         "GC-19.4": lambda sub: _validar_aseguradora(
             sub, candidatos.get("GC-19.4", []), texto
@@ -128,7 +136,7 @@ def validar_gc19(criterio, reconocimiento, contexto=None, texto_documento=""):
             cumple="La documentación se archiva en Bitácora junto con el contrato.",
             parcial="Se menciona Bitácora sin precisar el archivo conjunto.",
             ausente="No se identificó el archivo en Bitácora.",
-            terminos_parciales=("bitacora",),
+            terminos_parciales=(),
         ),
     }
 
