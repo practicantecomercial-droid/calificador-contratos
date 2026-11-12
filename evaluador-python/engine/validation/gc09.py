@@ -20,7 +20,16 @@ from .common import (
 from .generic import combinar_estado
 from .operators import contiene_frase, porcentajes
 
-_TERMINOS_POLIZA = ("poliza", "garantia", "amparo", "seguro")
+_TERMINOS_POLIZA = (
+    "poliza",
+    "amparo",
+    "seguro",
+    "garantia de cumplimiento",
+    "garantia de buen manejo",
+    "garantia de calidad",
+    "garantia de salarios",
+    "garantia de responsabilidad civil",
+)
 _AMPAROS = {
     "cumplimiento": ("cumplimiento",),
     "buen_manejo": ("buen manejo", "manejo del anticipo", "manejo de anticipo"),

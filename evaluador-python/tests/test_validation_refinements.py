@@ -171,3 +171,23 @@ def test_gc19_solicitud_de_anticipo_sin_cuenta_es_parcial(base):
     resultado = _validar(base, "GC-19", "Se solicita anticipo.")
     subs = _subrequisitos(resultado)
     assert subs["GC-19.2"]["estado"] == ESTADO_PARCIAL
+
+def test_gc09_retencion_de_garantias_no_es_poliza(base):
+    resultado = _validar(base, "GC-09", "% Ret Garantias: 10 %")
+    assert resultado["estado"] == ESTADO_NO_IDENTIFICADO
+
+
+def test_gc14_retencion_de_garantias_no_es_clausula(base):
+    resultado = _validar(base, "GC-14", "% Ret Garantias: 10 %")
+    assert resultado["estado"] == ESTADO_NO_IDENTIFICADO
+
+
+def test_gc14_clausula_de_garantias_y_seguros_se_identifica(base):
+    resultado = _validar(
+        base,
+        "GC-14",
+        "GARANTIAS Y SEGUROS: POLIZA DE CALIDAD DE PUERTAS desde 30 de "
+        "abril de 2026 hasta el 30 de abril de 2028.",
+    )
+    subs = _subrequisitos(resultado)
+    assert subs["GC-14.1"]["estado"] == ESTADO_CUMPLE

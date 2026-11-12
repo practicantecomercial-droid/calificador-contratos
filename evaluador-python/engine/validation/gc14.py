@@ -11,6 +11,17 @@ from .generic import combinar_estado
 from .operators import contiene_frase
 
 _GARANTIA = ("garantia", "respaldo", "garantia de producto")
+_GARANTIA_CONTEXTO = (
+    "garantia de",
+    "garantia del",
+    "garantia sobre",
+    "garantia por",
+    "garantia aplicable",
+    "garantias y",
+    "condiciones de garantia",
+    "terminos y condiciones",
+    "respaldo",
+)
 _PRODUCTO = ("puertas", "muebles", "carpinteria", "productos suministrados")
 _ANEXO = (
     "anexo",
@@ -35,8 +46,14 @@ _RECLAMO = (
 )
 
 
-def _validar_documento(subrequisito, candidatos, texto):
+def _hay_garantia(texto):
     if not contiene_frase(texto, _GARANTIA):
+        return False
+    return contiene_frase(texto, _GARANTIA_CONTEXTO)
+
+
+def _validar_documento(subrequisito, candidatos, texto):
+    if not _hay_garantia(texto):
         return resultado(
             subrequisito,
             ESTADO_NO_IDENTIFICADO,
@@ -69,7 +86,7 @@ def _validar_documento(subrequisito, candidatos, texto):
 
 
 def _validar_condicion(subrequisito, candidatos, texto, terminos, descripcion):
-    if not contiene_frase(texto, _GARANTIA):
+    if not _hay_garantia(texto):
         return resultado(
             subrequisito,
             ESTADO_NO_IDENTIFICADO,
@@ -93,7 +110,7 @@ def _validar_condicion(subrequisito, candidatos, texto, terminos, descripcion):
 
 
 def _validar_vigencia(subrequisito, candidatos, texto):
-    if not contiene_frase(texto, _GARANTIA):
+    if not _hay_garantia(texto):
         return resultado(
             subrequisito,
             ESTADO_NO_IDENTIFICADO,
